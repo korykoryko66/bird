@@ -287,42 +287,52 @@ function loadOwlModel(owl){
 
   const modelCandidates=[owl.model, owl.fallbackModel].filter(Boolean);
 
-  function loadCandidate(candidateIndex){
-    // A full URL safely encodes the Chinese filenames when the browser requests them.
-    const modelUrl=new URL(modelCandidates[candidateIndex], window.location.href).href;
-    gltfLoader.load(modelUrl, gltf=>{
-      if(loadId!==modelLoadId) return;
+  return new Promise(resolve=>{
+    function loadCandidate(candidateIndex){
+      // A full URL safely encodes the Chinese filenames when the browser requests them.
+      const modelUrl=new URL(modelCandidates[candidateIndex], window.location.href).href;
+      gltfLoader.load(modelUrl, gltf=>{
+        if(loadId!==modelLoadId){ resolve(false); return; }
 
-      const root=new THREE.Group();
-      const model=gltf.scene;
-      root.add(model);
+        const root=new THREE.Group();
+        const model=gltf.scene;
+        root.add(model);
 
-      // Centre and scale every source model to the same on-screen presentation.
-      const box=new THREE.Box3().setFromObject(model);
-      const size=box.getSize(new THREE.Vector3());
-      const center=box.getCenter(new THREE.Vector3());
-      const largestSide=Math.max(size.x,size.y,size.z,0.01);
-      model.position.sub(center);
-      model.scale.setScalar(3.15/largestSide);
+        // Centre and scale every source model to the same on-screen presentation.
+        const box=new THREE.Box3().setFromObject(model);
+        const size=box.getSize(new THREE.Vector3());
+        const center=box.getCenter(new THREE.Vector3());
+        const largestSide=Math.max(size.x,size.y,size.z,0.01);
+        model.position.sub(center);
+        model.scale.setScalar(3.15/largestSide);
 
-      root.scale.setScalar(0.001);
-      root.position.y=2.4;
-      owlObj={
-        root,
-        parts:{ feet:null, body:null, head:null, face:null, eyes:null, wings:null, wingPivots:[] }
-      };
-      scene.add(root);
-    }, undefined, ()=>{
-      if(loadId!==modelLoadId) return;
-      if(candidateIndex+1<modelCandidates.length){
-        loadCandidate(candidateIndex+1);
-      } else {
-        toast('模型載入失敗，請確認網站上的 GLB 檔案名稱。');
-      }
-    });
-  }
+        root.scale.setScalar(0.001);
+        root.position.y=2.4;
+        owlObj={
+          root,
+          parts:{ feet:null, body:null, head:null, face:null, eyes:null, wings:null, wingPivots:[] }
+        };
+        scene.add(root);
+        resolve(true);
+      }, event=>{
+        if(loadId!==modelLoadId) return;
+        const percent=event.total ? Math.round(event.loaded/event.total*100) : null;
+        showModelLoading(percent);
+      }, ()=>{
+        if(loadId!==modelLoadId){ resolve(false); return; }
+        if(candidateIndex+1<modelCandidates.length){
+          showModelLoading(null);
+          loadCandidate(candidateIndex+1);
+        } else {
+          showModelLoadError();
+          toast('模型載入失敗，請確認網站上的 GLB 檔案名稱。');
+          resolve(false);
+        }
+      });
+    }
 
-  loadCandidate(0);
+    loadCandidate(0);
+  });
 }
 
 /* ---- easing ---- */
@@ -353,13 +363,38 @@ function setCaption(i, owl){
 }
 function clearCaption(){ document.getElementById('captionChip').classList.remove('show'); }
 
-function enterStage(owl){
+function showModelLoading(percent){
+  const hasPercent=Number.isFinite(percent);
+  const value=hasPercent ? Math.max(0,Math.min(100,percent)) : 0;
+  document.getElementById('progressFill').style.width=value+'%';
+  document.getElementById('progressTxt').textContent=hasPercent
+    ? `正在下載 3D 模型 ${value}% · Loading model`
+    : '正在下載 3D 模型 · Loading model';
+  const caption=document.getElementById('captionChip');
+  caption.innerHTML=hasPercent
+    ? `正在下載貓頭鷹模型 ${value}%<br><b>Loading 3D owl model</b>`
+    : '正在下載貓頭鷹模型…<br><b>Loading 3D owl model</b>';
+  caption.classList.add('show');
+}
+
+function showModelLoadError(){
+  document.getElementById('progressTxt').textContent='模型載入失敗 · Model failed to load';
+  const caption=document.getElementById('captionChip');
+  caption.innerHTML='模型載入失敗，請重新整理後再試。<br><b>Model failed to load. Please refresh.</b>';
+  caption.classList.add('show');
+}
+
+async function enterStage(owl){
   showScreen('stage');
   document.getElementById('stageZh').textContent=owl.zh;
   document.getElementById('stageLat').textContent=owl.lat+' · '+owl.en;
   buildHotspotChips(owl);
-  loadOwlModel(owl);
+  stopIntroTimers();
+  enableChips(false);
+  showModelLoading(null);
   resizeRenderer();
+  const loaded=await loadOwlModel(owl);
+  if(!loaded || currentOwl!==owl) return;
   runIntro(owl);
 }
 
