@@ -223,7 +223,6 @@
   /* info sheet */
   #infoSheet{
     position:absolute; left:0; right:0; bottom:0;
-    z-index:20;
     background:var(--panel); border-top:1px solid var(--line);
     border-radius:20px 20px 0 0; padding:18px 20px calc(20px + env(safe-area-inset-bottom));
     transform:translateY(105%); transition:transform .35s cubic-bezier(.2,.9,.25,1);
