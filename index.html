@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>AR 貓頭鷹導覽 · 鳳凰谷鳥園生態園區</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand" id="brandLabel">國立自然科學博物館・鳳凰谷鳥園生態園區</div>
+    <button class="backbtn" id="backBtn">← 返回 Back</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- ===================== START ===================== -->
+  <section class="screen active" id="screen-start">
+    <div class="hello-bar">Hello, my name is</div>
+    <h1 class="title-zh">AR 貓頭鷹導覽</h1>
+    <div class="title-en">Interactive AR Owl Guide</div>
+    <p class="intro-copy">輕觸下方任一張解說牌照片，模擬「掃描解說牌」的過程 —— 貓頭鷹將以 3D 動畫現身，播放 15 秒自我介紹，接著你可以旋轉觀看、點擊身體部位認識構造，並播放牠的叫聲。</p>
+    <div class="grid" id="ownGrid"></div>
+    <p class="footnote"><b>這是什麼：</b>這個畫面示範的是「掃描之後會發生什麼」—— 也就是 AR 內容本身：3D 貓頭鷹、自動導覽動畫、可旋轉模型、部位解說、叫聲播放，完全不需要相機權限，方便你現在就在對話裡直接體驗。真正「用手機相機對準解說牌」的掃描辨識功能，在下方我準備的可部署版本中，使用 MindAR 影像辨識技術實作，需要架設到有 HTTPS 的網站才能在手機瀏覽器上運作。</p>
+  </section>
+
+  <!-- ===================== SCANNING ===================== -->
+  <section class="screen" id="screen-scan">
+    <div class="scan-stage">
+      <img id="scanImg" src="" alt="">
+      <div class="scan-corners"><span></span><span></span><span></span><span></span></div>
+      <div class="scan-line"></div>
+    </div>
+    <div class="scan-label">正在辨識解說牌 <b id="scanName"></b><span class="dots"><span></span><span></span><span></span></span></div>
+  </section>
+
+  <!-- ===================== STAGE ===================== -->
+  <section class="screen" id="screen-stage">
+    <div class="stage-head">
+      <div class="names">
+        <p class="zh" id="stageZh"></p>
+        <p class="lat" id="stageLat"></p>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><i id="progressFill"></i></div>
+      <div class="progress-txt" id="progressTxt">導覽動畫播放中 0:00 / 0:15</div>
+    </div>
+    <div id="canvas-wrap">
+      <canvas id="owlCanvas"></canvas>
+      <div class="caption-chip" id="captionChip"></div>
+      <div class="hint-chip" id="hintChip">輕觸下方部位、或直接觸摸模型來探索構造 · 拖曳可旋轉</div>
+    </div>
+
+    <div id="infoSheet">
+      <div class="row">
+        <div>
+          <h3 id="infoTitleZh"></h3>
+          <div class="en" id="infoTitleEn"></div>
+        </div>
+        <button class="closeX" id="infoClose">✕</button>
+      </div>
+      <p id="infoTextZh"></p>
+      <p class="en-text" id="infoTextEn"></p>
+    </div>
+
+    <div class="controls">
+      <div class="hotspot-row" id="hotspotRow"></div>
+      <div class="action-row">
+        <button class="btn btn-ghost" id="replayBtn">↻ 重播導覽</button>
+        <button class="btn btn-primary" id="callBtn">🔊 播放叫聲</button>
+        <button class="btn btn-ghost" id="anotherBtn">🦉 換一隻</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
