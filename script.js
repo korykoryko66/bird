@@ -279,6 +279,8 @@ function buildOwl(colors, hasEarTufts){
 
 let owlObj=null;
 let modelLoadId=0;
+const MODEL_REST_Y=-0.55;
+const MODEL_DROP_HEIGHT=2.4;
 
 function loadOwlModel(owl){
   const loadId=++modelLoadId;
@@ -307,7 +309,7 @@ function loadOwlModel(owl){
         model.scale.setScalar(3.15/largestSide);
 
         root.scale.setScalar(0.001);
-        root.position.y=2.4;
+        root.position.y=MODEL_REST_Y+MODEL_DROP_HEIGHT;
         owlObj={
           root,
           parts:{ feet:null, body:null, head:null, face:null, eyes:null, wings:null, wingPivots:[] }
@@ -450,7 +452,7 @@ function animateOwl(t, owl){
   const scale=easeOutBack(aT);
   root.scale.setScalar(Math.max(scale,0.001));
   const bT=clamp01(t/1100);
-  root.position.y = 2.4 - easeOutCubic(bT)*2.4;
+  root.position.y = MODEL_REST_Y + MODEL_DROP_HEIGHT - easeOutCubic(bT)*MODEL_DROP_HEIGHT;
 
   // phase B 900-1600 wing flutter (landing)
   flapWings(parts, t, 900, 1600, 1);
@@ -481,7 +483,7 @@ function animateOwl(t, owl){
   // idle after intro
   if(t>=TIMELINE_MS){
     const idleT=(t-TIMELINE_MS)/1000;
-    root.position.y = Math.sin(idleT*1.1)*0.035;
+    root.position.y = MODEL_REST_Y + Math.sin(idleT*1.1)*0.035;
     if(interactive){
       root.rotation.y = userRotY;
     }
