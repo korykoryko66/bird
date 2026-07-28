@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>AR 貓頭鷹導覽 · 鳳凰谷鳥園生態園區</title>
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 <div id="app">
@@ -21,7 +21,7 @@
     <div class="hello-bar">Hello, my name is</div>
     <h1 class="title-zh">AR 貓頭鷹導覽</h1>
     <div class="title-en">Interactive AR Owl Guide</div>
-    <p class="intro-copy">輕觸下方任一張解說牌照片，模擬「掃描解說牌」的過程 —— 貓頭鷹將以 3D 動畫現身，播放 15 秒自我介紹，接著你可以旋轉觀看、點擊身體部位認識構造，並播放牠的叫聲。</p>
+    <p class="intro-copy">輕觸下方任一張解說牌照片，模擬「掃描解說牌」的過程 —— 貓頭鷹將以 3D 動畫現身，播放 15 秒自我介紹與 270° 轉頭示範，接著你可以旋轉觀看、點擊身體部位認識構造，並播放牠的叫聲。</p>
     <div class="grid" id="ownGrid"></div>
     <p class="footnote"><b>這是什麼：</b>這個畫面示範的是「掃描之後會發生什麼」—— 也就是 AR 內容本身：3D 貓頭鷹、自動導覽動畫、可旋轉模型、部位解說、叫聲播放，完全不需要相機權限，方便你現在就在對話裡直接體驗。真正「用手機相機對準解說牌」的掃描辨識功能，在下方我準備的可部署版本中，使用 MindAR 影像辨識技術實作，需要架設到有 HTTPS 的網站才能在手機瀏覽器上運作。</p>
   </section>
@@ -60,7 +60,7 @@
         <button class="preview-skip" id="previewSkip" type="button">略過影片 Skip</button>
       </div>
       <div class="caption-chip" id="captionChip"></div>
-      <div class="hint-chip" id="hintChip">拖曳可旋轉 · 雙指縮放模型</div>
+      <div class="hint-chip" id="hintChip">拖曳旋轉 · 雙指縮放 · 點 270°轉頭可重播</div>
       <div class="zoom-controls" aria-label="模型縮放控制">
         <button id="zoomInBtn" aria-label="放大模型" disabled>＋</button>
         <button id="zoomResetBtn" aria-label="重設模型大小" disabled>100%</button>
@@ -94,6 +94,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
-<script src="script.js?v=5"></script>
+<script src="script.js?v=8"></script>
 </body>
 </html>

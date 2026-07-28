@@ -93,6 +93,12 @@ const OWLS = {
   }
 };
 const OWL_ORDER = ['brown','collared','barn','shorteared'];
+const HEAD_TURN_INFO = {
+  zh:'270°轉頭',
+  en:'270° Head Turn',
+  tzh:'貓頭鷹的眼睛呈管狀，固定在骨性眼窩中，幾乎不能像人類一樣轉動，因此必須轉頭改變視線。牠們有 14 節靈活的頸椎；較寬的椎動脈通道與能暫時儲血、維持腦部供血的血管構造，讓牠們在大幅轉頭時不易傷害血管。最大轉動約 270°，並不是能連續旋轉 360°。',
+  ten:'Owls have tube-shaped eyes that are held almost fixed in their sockets, so they turn the head to shift their view. Fourteen flexible neck vertebrae, roomy arterial canals and blood-reservoir adaptations help maintain circulation during an extreme turn. The maximum is about 270° — not a continuous 360° spin.'
+};
 
 /* ---------------------------------------------------------------------- */
 /* UI wiring                                                              */
@@ -190,6 +196,11 @@ function returnToStart(){
   scanTimer=null;
   cancelPreview();
   stopIntroTimers();
+  headFeatureStart=null;
+  clearTimeout(toast._h);
+  document.getElementById('toast').classList.remove('show');
+  document.getElementById('infoSheet').classList.remove('open');
+  setActiveChip(null);
   modelLoadId++;
   currentOwl=null;
   showScreen('start');
@@ -351,6 +362,92 @@ let modelLoadId=0;
 const MODEL_REST_Y=-0.55;
 const MODEL_DROP_HEIGHT=2.4;
 
+/*
+ * The supplied GLBs are each a single static mesh with no separate head bone.
+ * Split the upper head region into a lightweight runtime pivot, with a small
+ * overlap of neck feathers to conceal the join. The original GLB stays intact.
+ */
+function createHeadTurnController(model){
+  const controller={
+    angle:0,
+    pivots:[],
+    setAngle(angle){
+      this.angle=angle;
+      this.pivots.forEach(pivot=>{ pivot.rotation.y=angle; });
+    }
+  };
+
+  const meshes=[];
+  model.traverse(object=>{
+    if(object.isMesh && object.geometry) meshes.push(object);
+  });
+
+  meshes.forEach(object=>{
+    if(!object.isMesh || !object.geometry) return;
+    const sourceGeometry=object.geometry;
+    const position=sourceGeometry.getAttribute('position');
+    if(!position) return;
+    sourceGeometry.computeBoundingBox();
+    sourceGeometry.computeBoundingSphere();
+    const bounds=sourceGeometry.boundingBox;
+    const height=Math.max(bounds.max.y-bounds.min.y,0.001);
+    const centerX=(bounds.min.x+bounds.max.x)/2;
+    const centerZ=(bounds.min.z+bounds.max.z)/2;
+    const headBottom=bounds.min.y+height*0.65;
+    const bodyTop=bounds.min.y+height*0.71;
+    const sourceIndex=sourceGeometry.index;
+    const sourceCount=sourceIndex ? sourceIndex.count : position.count;
+    const headIndices=[];
+    const bodyIndices=[];
+
+    for(let i=0;i<sourceCount;i+=3){
+      const a=sourceIndex ? sourceIndex.getX(i) : i;
+      const b=sourceIndex ? sourceIndex.getX(i+1) : i+1;
+      const c=sourceIndex ? sourceIndex.getX(i+2) : i+2;
+      const meanY=(position.getY(a)+position.getY(b)+position.getY(c))/3;
+      if(meanY>=headBottom) headIndices.push(a,b,c);
+      if(meanY<=bodyTop) bodyIndices.push(a,b,c);
+    }
+
+    const makeSectionGeometry=indices=>{
+      const geometry=new THREE.BufferGeometry();
+      Object.keys(sourceGeometry.attributes).forEach(name=>{
+        geometry.setAttribute(name,sourceGeometry.getAttribute(name));
+      });
+      Object.keys(sourceGeometry.morphAttributes).forEach(name=>{
+        geometry.morphAttributes[name]=sourceGeometry.morphAttributes[name];
+      });
+      const IndexArray=position.count>65535 ? Uint32Array : Uint16Array;
+      geometry.setIndex(new THREE.BufferAttribute(new IndexArray(indices),1));
+      geometry.boundingBox=sourceGeometry.boundingBox.clone();
+      geometry.boundingSphere=sourceGeometry.boundingSphere.clone();
+      return geometry;
+    };
+
+    const bodyGeometry=makeSectionGeometry(bodyIndices);
+    const headGeometry=makeSectionGeometry(headIndices);
+    object.geometry=bodyGeometry;
+
+    const headMaterial=Array.isArray(object.material)
+      ? object.material.map(material=>material.clone())
+      : object.material.clone();
+    const headMesh=new THREE.Mesh(headGeometry,headMaterial);
+    headMesh.name=object.name+'-head';
+    headMesh.castShadow=object.castShadow;
+    headMesh.receiveShadow=object.receiveShadow;
+    headMesh.position.set(-centerX,0,-centerZ);
+
+    const pivot=new THREE.Group();
+    pivot.name=object.name+'-head-pivot';
+    pivot.position.set(centerX,0,centerZ);
+    pivot.add(headMesh);
+    object.parent.add(pivot);
+    controller.pivots.push(pivot);
+  });
+
+  return controller;
+}
+
 function loadOwlModel(owl){
   const loadId=++modelLoadId;
   if(owlObj){ scene.remove(owlObj.root); }
@@ -377,12 +474,13 @@ function loadOwlModel(owl){
         const largestSide=Math.max(size.x,size.y,size.z,0.01);
         model.position.sub(center);
         model.scale.setScalar(3.15/largestSide);
+        const headTurn=createHeadTurnController(model);
 
         root.scale.setScalar(0.001);
         root.position.y=MODEL_REST_Y+MODEL_DROP_HEIGHT;
         owlObj={
           root,
-          parts:{ feet:null, body:null, head:null, face:null, eyes:null, wings:null, wingPivots:[] }
+          parts:{ feet:null, body:null, head:null, headTurn, face:null, eyes:null, wings:null, wingPivots:[] }
         };
         scene.add(root);
         enableZoomControls(true);
@@ -416,9 +514,13 @@ function clamp01(t){return Math.max(0,Math.min(1,t));}
 
 /* ---- intro timeline (15s) ---- */
 const TIMELINE_MS=15000;
+const HEAD_TURN_START_MS=5900;
+const HEAD_TURN_DURATION_MS=5600;
+const HEAD_TURN_MAX=Math.PI*1.5;
 let introStart=0, introRunning=false, interactive=false, rafId=null;
 let userRotY=0, userScale=1, blinkPhaseDone=[false,false];
 let introTimers=[];
+let headFeatureStart=null;
 
 function stopIntroTimers(){
   introTimers.forEach(t=>clearTimeout(t));
@@ -432,6 +534,11 @@ function setCaption(i, owl){
   const el=document.getElementById('captionChip');
   const c=owl.captions[i % owl.captions.length];
   el.innerHTML=`${c[0]}<br><b>${c[1]}</b>`;
+  el.classList.add('show');
+}
+function setHeadTurnCaption(){
+  const el=document.getElementById('captionChip');
+  el.innerHTML='眼睛幾乎不能轉動，因此用靈活頸椎與特殊血管構造轉頭約 270°<br><b>Fixed eyes, a flexible neck and protected blood flow make the 270° turn possible.</b>';
   el.classList.add('show');
 }
 function clearCaption(){ document.getElementById('captionChip').classList.remove('show'); }
@@ -487,6 +594,8 @@ function runIntro(owl){
   document.getElementById('infoSheet').classList.remove('open');
   setActiveChip(null);
   userRotY=0; blinkPhaseDone=[false,false];
+  headFeatureStart=null;
+  if(owlObj) setHeadTurnAngle(owlObj.parts,0);
   introRunning=true; interactive=false;
   introStart=performance.now();
 
@@ -494,9 +603,11 @@ function runIntro(owl){
   const txt=document.getElementById('progressTxt');
 
   // caption schedule
-  [0,3600,7400,11200].forEach((delay,i)=>{
-    introTimers.push(setTimeout(()=>setCaption(i,owl), delay));
-  });
+  introTimers.push(setTimeout(()=>setCaption(0,owl),0));
+  introTimers.push(setTimeout(()=>setCaption(1,owl),3200));
+  introTimers.push(setTimeout(setHeadTurnCaption,HEAD_TURN_START_MS));
+  introTimers.push(setTimeout(()=>setCaption(2,owl),11600));
+  introTimers.push(setTimeout(()=>setCaption(3,owl),13300));
   introTimers.push(setTimeout(clearCaption, TIMELINE_MS-300));
   introTimers.push(setTimeout(()=>{
     document.getElementById('hintChip').classList.add('show');
@@ -535,28 +646,26 @@ function animateOwl(t, owl){
   // phase B 900-1600 wing flutter (landing)
   flapWings(parts, t, 900, 1600, 1);
 
-  // phase C 1600-6600: one full spin
-  if(t<6600){
-    const cT=clamp01((t-1600)/5000);
+  // phase C 1600-5600: one full body spin
+  if(t<5600){
+    const cT=clamp01((t-1600)/4000);
     root.rotation.y = easeInOutSine(cT)*Math.PI*2;
   } else if (!interactive) {
     root.rotation.y = 0 + userRotY;
   }
 
-  // phase D 6600-9600: head turn + blinks
-  if(t>=6600 && t<9600){
-    const dT=(t-6600)/3000;
-    const turn=Math.sin(dT*Math.PI*1.5)*0.5;
-    if(parts.head) parts.head.rotation.y=turn;
-  } else if(t>=9600){
-    if(parts.head) parts.head.rotation.y*=0.9;
+  // phase D: demonstrate a 270-degree head turn, then return to front.
+  if(t>=HEAD_TURN_START_MS && t<HEAD_TURN_START_MS+HEAD_TURN_DURATION_MS){
+    setHeadTurnAngle(parts,headTurnAngle(t-HEAD_TURN_START_MS));
+  } else if(t<TIMELINE_MS) {
+    setHeadTurnAngle(parts,0);
   }
-  blink(parts, t, 7200, 0);
-  blink(parts, t, 8700, 1);
+  blink(parts, t, 6500, 0);
+  blink(parts, t, 10800, 1);
 
-  // phase E 9600-13600: two flaps
-  flapWings(parts, t, 10000, 10700, 1);
-  flapWings(parts, t, 12200, 12900, 1);
+  // phase E: two flaps
+  flapWings(parts, t, 11600, 12300, 1);
+  flapWings(parts, t, 13200, 13900, 1);
 
   // idle after intro
   if(t>=TIMELINE_MS){
@@ -565,12 +674,51 @@ function animateOwl(t, owl){
     if(interactive){
       root.rotation.y = userRotY;
     }
+    if(headFeatureStart!==null){
+      const featureElapsed=performance.now()-headFeatureStart;
+      setHeadTurnAngle(parts,headTurnAngle(featureElapsed));
+      if(featureElapsed>=HEAD_TURN_DURATION_MS){
+        headFeatureStart=null;
+        setHeadTurnAngle(parts,0);
+      }
+    } else {
+      setHeadTurnAngle(parts,0);
+    }
     if(Math.floor(idleT)%5===0){
       const ph=(idleT%5);
       if(ph<0.16){ setEyeScale(parts, 1-Math.sin(ph/0.16*Math.PI)*0.85); }
       else setEyeScale(parts,1);
     } else setEyeScale(parts,1);
   }
+}
+
+function headTurnAngle(elapsed){
+  const turnEnd=3200;
+  const holdEnd=3800;
+  if(elapsed<=0) return 0;
+  if(elapsed<turnEnd){
+    return easeInOutSine(elapsed/turnEnd)*HEAD_TURN_MAX;
+  }
+  if(elapsed<holdEnd) return HEAD_TURN_MAX;
+  if(elapsed<HEAD_TURN_DURATION_MS){
+    const returnT=(elapsed-holdEnd)/(HEAD_TURN_DURATION_MS-holdEnd);
+    return (1-easeInOutSine(returnT))*HEAD_TURN_MAX;
+  }
+  return 0;
+}
+
+function setHeadTurnAngle(parts,angle){
+  if(parts.headTurn){
+    parts.headTurn.setAngle(angle);
+  } else if(parts.head){
+    parts.head.rotation.y=angle;
+  }
+}
+
+function playHeadTurnFeature(){
+  if(!interactive || !owlObj) return;
+  headFeatureStart=performance.now();
+  toast('正在示範 270° 轉頭');
 }
 
 function flapWings(parts,t,start,end,amount){
@@ -708,17 +856,21 @@ function handleTap(e){
 }
 
 /* ---- hotspot chips + info sheet ---- */
-const HOTSPOT_KEYS=['face','eyes','wings','feet'];
+const HOTSPOT_KEYS=['neck','face','eyes','wings','feet'];
 function buildHotspotChips(owl){
   const row=document.getElementById('hotspotRow');
   row.innerHTML='';
   HOTSPOT_KEYS.forEach(k=>{
-    const h=owl.hotspots[k];
+    const h=k==='neck' ? HEAD_TURN_INFO : owl.hotspots[k];
     const chip=document.createElement('button');
     chip.className='chip';
     chip.dataset.key=k;
     chip.innerHTML=`<span class="dot"></span>${h.zh}`;
-    chip.onclick=()=>{ if(interactive) openHotspot(k); };
+    chip.onclick=()=>{
+      if(!interactive) return;
+      openHotspot(k);
+      if(k==='neck') playHeadTurnFeature();
+    };
     row.appendChild(chip);
   });
   enableChips(false);
@@ -733,7 +885,7 @@ function setActiveChip(key){
 }
 function openHotspot(key){
   if(!currentOwl) return;
-  const h=currentOwl.hotspots[key];
+  const h=key==='neck' ? HEAD_TURN_INFO : currentOwl.hotspots[key];
   document.getElementById('infoTitleZh').textContent=h.zh;
   document.getElementById('infoTitleEn').textContent=h.en;
   document.getElementById('infoTextZh').textContent=h.tzh;
