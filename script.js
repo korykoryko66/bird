@@ -10,7 +10,7 @@ const OWLS = {
   brown: {
     id:'brown', order:1,
     zh:'褐林鴞', en:'Brown Wood Owl', lat:'Strix leptogrammica',
-    photo:'img/photo_1.jpg', poster:'img/poster_1.jpg', model:'褐林鴞.glb', fallbackModel:'glb/褐林鴞.glb',
+    photo:'img/photo_1.jpg', poster:'img/poster_1.jpg', movie:'movie/褐林鴞.mp4', model:'褐林鴞.glb', fallbackModel:'glb/褐林鴞.glb',
     colors:{ body:0x6b4a30, bodyDark:0x4a3320, belly:0xe3cda6, face:0xd8bd8d, eyes:0x120d08, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:false,
     call:'hoot4',
@@ -31,7 +31,7 @@ const OWLS = {
   collared: {
     id:'collared', order:2,
     zh:'領角鴞', en:'Collared Scops Owl', lat:'Otus lettia',
-    photo:'img/photo_2.jpg', poster:'img/poster_2.jpg', model:'領⾓鴞.glb', fallbackModel:'glb/領⾓鴞.glb',
+    photo:'img/photo_2.jpg', poster:'img/poster_2.jpg', movie:'movie/領⾓鴞.mp4', model:'領⾓鴞.glb', fallbackModel:'glb/領⾓鴞.glb',
     colors:{ body:0x7c7264, bodyDark:0x584f43, belly:0xcfc6b0, face:0xa79a80, eyes:0xc98a1f, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:true,
     call:'trill',
@@ -52,7 +52,7 @@ const OWLS = {
   barn: {
     id:'barn', order:3,
     zh:'倉鴞', en:'Barn Owl', lat:'Tyto alba',
-    photo:'img/photo_3.jpg', poster:'img/poster_3.jpg', model:'倉鴞.glb', fallbackModel:'glb/倉鴞.glb',
+    photo:'img/photo_3.jpg', poster:'img/poster_3.jpg', movie:'movie/倉鴞.mp4', model:'倉鴞.glb', fallbackModel:'glb/倉鴞.glb',
     colors:{ body:0xcaa562, bodyDark:0x8a6a3c, belly:0xf3ead0, face:0xf1e6c8, eyes:0x1a1310, beak:0x352818, perch:0x5b4530 },
     hasEarTufts:false,
     call:'screech',
@@ -73,7 +73,7 @@ const OWLS = {
   shorteared: {
     id:'shorteared', order:4,
     zh:'短耳鴞', en:'Short-eared Owl', lat:'Asio flammeus',
-    photo:'img/photo_4.jpg', poster:'img/poster_4.jpg', model:'短耳鴞.glb', fallbackModel:'glb/短耳鴞.glb',
+    photo:'img/photo_4.jpg', poster:'img/poster_4.jpg', movie:'movie/短耳鴞.mp4', model:'短耳鴞.glb', fallbackModel:'glb/短耳鴞.glb',
     colors:{ body:0x8a6b3f, bodyDark:0x5c4527, belly:0xdcc79a, face:0xc7ac78, eyes:0xf0c23e, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:false,
     call:'softhoot',
@@ -107,7 +107,6 @@ function showScreen(name){
   screens[name].classList.add('active');
   document.getElementById('backBtn').classList.toggle('show', name!=='start');
 }
-document.getElementById('backBtn').onclick = ()=>{ stopIntroTimers(); showScreen('start'); };
 
 function toast(msg){
   const t=document.getElementById('toast');
@@ -129,16 +128,86 @@ OWL_ORDER.forEach(key=>{
 });
 
 let currentOwl=null;
+let scanTimer=null;
+
+const previewOverlay=document.getElementById('previewOverlay');
+const previewVideo=document.getElementById('previewVideo');
+const previewSkip=document.getElementById('previewSkip');
+const previewStatus=document.getElementById('previewStatus');
+let previewRunId=0;
+let finishCurrentPreview=null;
+
+function hidePreview(){
+  previewOverlay.classList.remove('show');
+  previewOverlay.setAttribute('aria-hidden','true');
+  previewVideo.pause();
+}
+
+function cancelPreview(){
+  if(finishCurrentPreview) finishCurrentPreview('cancel');
+  finishCurrentPreview=null;
+  previewRunId++;
+  hidePreview();
+}
+
+function playPreview(owl){
+  cancelPreview();
+  const runId=++previewRunId;
+  previewVideo.src=new URL(owl.movie,window.location.href).href;
+  previewVideo.poster=owl.poster;
+  previewVideo.currentTime=0;
+  document.getElementById('previewTitle').textContent=owl.zh+' · '+owl.en;
+  previewStatus.textContent='影片預覽 · 3D 模型同步載入中';
+  previewSkip.disabled=false;
+  previewSkip.textContent='略過影片 Skip';
+  previewOverlay.classList.add('show');
+  previewOverlay.setAttribute('aria-hidden','false');
+
+  return new Promise(resolve=>{
+    let finished=false;
+    const finish=reason=>{
+      if(finished || runId!==previewRunId) return;
+      finished=true;
+      previewSkip.disabled=true;
+      previewSkip.textContent='正在準備 3D…';
+      previewStatus.textContent=reason==='ended'
+        ? '影片播放完成 · 正在準備 3D 模型'
+        : '正在準備 3D 模型…';
+      finishCurrentPreview=null;
+      resolve(reason);
+    };
+    finishCurrentPreview=finish;
+    previewVideo.onended=()=>finish('ended');
+    previewVideo.onerror=()=>finish('error');
+    previewSkip.onclick=()=>finish('skip');
+    const playPromise=previewVideo.play();
+    if(playPromise) playPromise.catch(()=>finish('error'));
+  });
+}
+
+function returnToStart(){
+  clearTimeout(scanTimer);
+  scanTimer=null;
+  cancelPreview();
+  stopIntroTimers();
+  modelLoadId++;
+  currentOwl=null;
+  showScreen('start');
+}
+
+document.getElementById('backBtn').onclick=returnToStart;
 
 function startScan(key){
+  clearTimeout(scanTimer);
+  cancelPreview();
   currentOwl=OWLS[key];
   document.getElementById('scanImg').src=currentOwl.poster;
   document.getElementById('scanName').textContent=currentOwl.zh;
   showScreen('scan');
-  setTimeout(()=>enterStage(currentOwl), 1650);
+  scanTimer=setTimeout(()=>enterStage(currentOwl),1650);
 }
 
-document.getElementById('anotherBtn').onclick=()=>{ stopIntroTimers(); showScreen('start'); };
+document.getElementById('anotherBtn').onclick=returnToStart;
 
 /* ---------------------------------------------------------------------- */
 /* Three.js owl scene                                                     */
@@ -389,6 +458,7 @@ function showModelLoadError(){
 }
 
 async function enterStage(owl){
+  scanTimer=null;
   showScreen('stage');
   document.getElementById('stageZh').textContent=owl.zh;
   document.getElementById('stageLat').textContent=owl.lat+' · '+owl.en;
@@ -399,8 +469,12 @@ async function enterStage(owl){
   enableChips(false);
   showModelLoading(null);
   resizeRenderer();
-  const loaded=await loadOwlModel(owl);
-  if(!loaded || currentOwl!==owl) return;
+  const previewPromise=playPreview(owl);
+  const modelPromise=loadOwlModel(owl);
+  const [,loaded]=await Promise.all([previewPromise,modelPromise]);
+  if(currentOwl!==owl) return;
+  hidePreview();
+  if(!loaded) return;
   runIntro(owl);
 }
 

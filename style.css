@@ -140,6 +140,30 @@
 
   #canvas-wrap{position:relative; flex:1; min-height:0;}
   #owlCanvas{width:100%; height:100%; display:block; touch-action:none;}
+  .preview-overlay{
+    position:absolute; inset:0; z-index:8; overflow:hidden;
+    background:#0c0f0b; opacity:0; visibility:hidden;
+    transition:opacity .45s ease, visibility .45s ease;
+  }
+  .preview-overlay.show{opacity:1; visibility:visible;}
+  .preview-overlay video{width:100%; height:100%; display:block; object-fit:contain; background:#0c0f0b;}
+  .preview-vignette{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 30%,transparent 62%,rgba(0,0,0,.7));
+  }
+  .preview-copy{
+    position:absolute; left:16px; right:16px; bottom:18px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    text-align:center; text-shadow:0 2px 12px rgba(0,0,0,.85);
+  }
+  .preview-copy b{font-family:var(--serif); font-size:18px; color:var(--cream);}
+  .preview-copy span{font-size:11px; color:var(--cream-dim); letter-spacing:.04em;}
+  .preview-skip{
+    position:absolute; top:12px; right:12px; z-index:2;
+    border:1px solid rgba(239,235,217,.35); border-radius:999px;
+    background:rgba(12,15,11,.68); color:var(--cream); padding:8px 12px;
+    font-family:var(--sans); font-size:11px; cursor:pointer; backdrop-filter:blur(6px);
+  }
   .hint-chip{
     position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
     background:rgba(18,20,15,.72); backdrop-filter:blur(6px);

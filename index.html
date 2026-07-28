@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>AR 貓頭鷹導覽 · 鳳凰谷鳥園生態園區</title>
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 <div id="app">
@@ -50,6 +50,15 @@
     </div>
     <div id="canvas-wrap">
       <canvas id="owlCanvas"></canvas>
+      <div class="preview-overlay" id="previewOverlay" aria-hidden="true">
+        <video id="previewVideo" muted playsinline preload="auto"></video>
+        <div class="preview-vignette"></div>
+        <div class="preview-copy">
+          <b id="previewTitle"></b>
+          <span id="previewStatus">影片預覽 · 3D 模型同步載入中</span>
+        </div>
+        <button class="preview-skip" id="previewSkip" type="button">略過影片 Skip</button>
+      </div>
       <div class="caption-chip" id="captionChip"></div>
       <div class="hint-chip" id="hintChip">拖曳可旋轉 · 雙指縮放模型</div>
       <div class="zoom-controls" aria-label="模型縮放控制">
@@ -85,6 +94,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
-<script src="script.js?v=4"></script>
+<script src="script.js?v=5"></script>
 </body>
 </html>
