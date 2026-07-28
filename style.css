@@ -155,6 +155,19 @@
   }
   .caption-chip.show{opacity:1;}
   .caption-chip b{color:var(--moon); font-weight:600;}
+  .zoom-controls{
+    position:absolute; right:12px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:7px; z-index:4;
+  }
+  .zoom-controls button{
+    width:42px; height:42px; padding:0; border-radius:13px;
+    border:1px solid var(--line); background:rgba(28,32,24,.88); color:var(--cream);
+    font-family:var(--sans); font-size:22px; line-height:1; cursor:pointer;
+    box-shadow:0 5px 18px rgba(0,0,0,.2); backdrop-filter:blur(6px);
+  }
+  .zoom-controls #zoomResetBtn{font-size:10px; font-weight:700;}
+  .zoom-controls button:disabled{opacity:.35; cursor:default;}
+  .zoom-controls button:not(:disabled):active{transform:scale(.92);}
 
   .controls{
     flex-shrink:0; padding:10px 14px calc(14px + env(safe-area-inset-bottom));

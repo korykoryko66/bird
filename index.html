@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>AR 貓頭鷹導覽 · 鳳凰谷鳥園生態園區</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div id="app">
@@ -51,7 +51,12 @@
     <div id="canvas-wrap">
       <canvas id="owlCanvas"></canvas>
       <div class="caption-chip" id="captionChip"></div>
-      <div class="hint-chip" id="hintChip">輕觸下方部位、或直接觸摸模型來探索構造 · 拖曳可旋轉</div>
+      <div class="hint-chip" id="hintChip">拖曳可旋轉 · 雙指縮放模型</div>
+      <div class="zoom-controls" aria-label="模型縮放控制">
+        <button id="zoomInBtn" aria-label="放大模型" disabled>＋</button>
+        <button id="zoomResetBtn" aria-label="重設模型大小" disabled>100%</button>
+        <button id="zoomOutBtn" aria-label="縮小模型" disabled>−</button>
+      </div>
     </div>
 
     <div id="infoSheet">
@@ -80,6 +85,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

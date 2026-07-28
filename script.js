@@ -286,6 +286,7 @@ function loadOwlModel(owl){
   const loadId=++modelLoadId;
   if(owlObj){ scene.remove(owlObj.root); }
   owlObj=null;
+  enableZoomControls(false);
 
   const modelCandidates=[owl.model, owl.fallbackModel].filter(Boolean);
 
@@ -315,6 +316,7 @@ function loadOwlModel(owl){
           parts:{ feet:null, body:null, head:null, face:null, eyes:null, wings:null, wingPivots:[] }
         };
         scene.add(root);
+        enableZoomControls(true);
         resolve(true);
       }, event=>{
         if(loadId!==modelLoadId) return;
@@ -346,7 +348,7 @@ function clamp01(t){return Math.max(0,Math.min(1,t));}
 /* ---- intro timeline (15s) ---- */
 const TIMELINE_MS=15000;
 let introStart=0, introRunning=false, interactive=false, rafId=null;
-let userRotY=0, blinkPhaseDone=[false,false];
+let userRotY=0, userScale=1, blinkPhaseDone=[false,false];
 let introTimers=[];
 
 function stopIntroTimers(){
@@ -391,6 +393,8 @@ async function enterStage(owl){
   document.getElementById('stageZh').textContent=owl.zh;
   document.getElementById('stageLat').textContent=owl.lat+' · '+owl.en;
   buildHotspotChips(owl);
+  userScale=1;
+  updateZoomLabel();
   stopIntroTimers();
   enableChips(false);
   showModelLoading(null);
@@ -450,7 +454,7 @@ function animateOwl(t, owl){
   // phase A 0-900: scale + fly down
   const aT=clamp01(t/900);
   const scale=easeOutBack(aT);
-  root.scale.setScalar(Math.max(scale,0.001));
+  root.scale.setScalar(Math.max(scale,0.001)*userScale);
   const bT=clamp01(t/1100);
   root.position.y = MODEL_REST_Y + MODEL_DROP_HEIGHT - easeOutCubic(bT)*MODEL_DROP_HEIGHT;
 
@@ -513,24 +517,101 @@ function setEyeScale(parts, s){
   if(parts.eyes) parts.eyes.scale.y = s;
 }
 
-/* ---- pointer interaction: drag to rotate + tap hotspots ---- */
-let pStart=null, pMoved=false;
-canvas.addEventListener('pointerdown', e=>{
-  pStart={x:e.clientX,y:e.clientY, rot:userRotY};
-  pMoved=false;
+/* ---- pointer interaction: drag, pinch/wheel zoom, and tap hotspots ---- */
+const MIN_MODEL_SCALE=0.55;
+const MAX_MODEL_SCALE=1.65;
+let pStart=null, pMoved=false, primaryPointerId=null;
+let pinchStartDistance=0, pinchStartScale=1;
+const activePointers=new Map();
+
+function clampModelScale(value){
+  return Math.max(MIN_MODEL_SCALE,Math.min(MAX_MODEL_SCALE,value));
+}
+function updateZoomLabel(){
+  const button=document.getElementById('zoomResetBtn');
+  if(button) button.textContent=Math.round(userScale*100)+'%';
+}
+function setModelScale(value){
+  userScale=clampModelScale(value);
+  updateZoomLabel();
+}
+function enableZoomControls(enabled){
+  ['zoomInBtn','zoomResetBtn','zoomOutBtn'].forEach(id=>{
+    const button=document.getElementById(id);
+    if(button) button.disabled=!enabled;
+  });
+}
+function pointerDistance(){
+  const points=[...activePointers.values()];
+  if(points.length<2) return 0;
+  return Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y);
+}
+
+canvas.addEventListener('pointerdown',e=>{
+  if(!owlObj) return;
+  if(canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
+  activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+  if(activePointers.size===1){
+    primaryPointerId=e.pointerId;
+    pStart={x:e.clientX,y:e.clientY,rot:userRotY};
+    pMoved=false;
+  } else if(activePointers.size===2){
+    pinchStartDistance=pointerDistance();
+    pinchStartScale=userScale;
+    pMoved=true;
+  }
 });
-canvas.addEventListener('pointermove', e=>{
-  if(!pStart) return;
+canvas.addEventListener('pointermove',e=>{
+  if(!activePointers.has(e.pointerId)) return;
+  activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+  if(activePointers.size>=2){
+    const distance=pointerDistance();
+    if(pinchStartDistance>0) setModelScale(pinchStartScale*distance/pinchStartDistance);
+    pMoved=true;
+    return;
+  }
+
+  if(!pStart || e.pointerId!==primaryPointerId) return;
   const dx=e.clientX-pStart.x;
   if(Math.abs(dx)>4) pMoved=true;
   if(interactive){
-    userRotY = pStart.rot + dx*0.012;
+    userRotY=pStart.rot+dx*0.012;
   }
 });
-window.addEventListener('pointerup', e=>{
-  if(pStart && !pMoved){ handleTap(e); }
-  pStart=null;
-});
+
+function finishPointer(e){
+  if(!activePointers.has(e.pointerId)) return;
+  const shouldTap=activePointers.size===1 && e.pointerId===primaryPointerId && pStart && !pMoved;
+  activePointers.delete(e.pointerId);
+
+  if(shouldTap) handleTap(e);
+
+  if(activePointers.size===1){
+    const [id,point]=activePointers.entries().next().value;
+    primaryPointerId=id;
+    pStart={x:point.x,y:point.y,rot:userRotY};
+    pMoved=true;
+  } else if(activePointers.size===0){
+    pStart=null;
+    primaryPointerId=null;
+    pMoved=false;
+  }
+}
+canvas.addEventListener('pointerup',finishPointer);
+canvas.addEventListener('pointercancel',finishPointer);
+window.addEventListener('pointerup',finishPointer);
+
+canvas.addEventListener('wheel',e=>{
+  if(!owlObj) return;
+  e.preventDefault();
+  setModelScale(userScale*Math.exp(-e.deltaY*0.0015));
+},{passive:false});
+
+document.getElementById('zoomInBtn').onclick=()=>setModelScale(userScale*1.15);
+document.getElementById('zoomOutBtn').onclick=()=>setModelScale(userScale/1.15);
+document.getElementById('zoomResetBtn').onclick=()=>setModelScale(1);
 
 function handleTap(e){
   if(!owlObj) return;
