@@ -27,10 +27,12 @@
 
   /* ---------- top bar ---------- */
   .topbar{
+    position:relative; z-index:40; pointer-events:none;
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 18px 10px;
     flex-shrink:0;
   }
+  .topbar button{pointer-events:auto;}
   .brand{
     font-size:11px; letter-spacing:.14em; color:var(--cream-dim);
     text-transform:uppercase; font-weight:600;
