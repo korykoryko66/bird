@@ -6,11 +6,15 @@
    how this connects to the real camera-based MindAR implementation.
    ========================================================================= */
 
+const ASSET_CDN_VERSION = '13fe839d8c5fc615c122a112b88d9ff7f3ac6d85';
+const ASSET_CDN = `https://cdn.jsdelivr.net/gh/korykoryko66/bird@${ASSET_CDN_VERSION}`;
+const cdnAsset = path => `${ASSET_CDN}/${path.split('/').map(encodeURIComponent).join('/')}`;
+
 const OWLS = {
   brown: {
     id:'brown', order:1,
     zh:'褐林鴞', en:'Brown Wood Owl', lat:'Strix leptogrammica',
-    photo:'img/photo_1.jpg', poster:'img/poster_1.jpg', movie:'movie/褐林鴞.mp4', model:'褐林鴞.glb', fallbackModel:'glb/褐林鴞.glb',
+    photo:'img/photo_1.jpg', poster:'img/poster_1.jpg', movie:cdnAsset('movie/褐林鴞.mp4'), model:cdnAsset('褐林鴞.glb'), fallbackModel:'褐林鴞.glb',
     colors:{ body:0x6b4a30, bodyDark:0x4a3320, belly:0xe3cda6, face:0xd8bd8d, eyes:0x120d08, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:false,
     call:'hoot4',
@@ -31,7 +35,7 @@ const OWLS = {
   collared: {
     id:'collared', order:2,
     zh:'領角鴞', en:'Collared Scops Owl', lat:'Otus lettia',
-    photo:'img/photo_2.jpg', poster:'img/poster_2.jpg', movie:'movie/領⾓鴞.mp4', model:'領⾓鴞.glb', fallbackModel:'glb/領⾓鴞.glb',
+    photo:'img/photo_2.jpg', poster:'img/poster_2.jpg', movie:cdnAsset('movie/領⾓鴞.mp4'), model:cdnAsset('領⾓鴞.glb'), fallbackModel:'領⾓鴞.glb',
     colors:{ body:0x7c7264, bodyDark:0x584f43, belly:0xcfc6b0, face:0xa79a80, eyes:0xc98a1f, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:true,
     call:'trill',
@@ -52,7 +56,7 @@ const OWLS = {
   barn: {
     id:'barn', order:3,
     zh:'倉鴞', en:'Barn Owl', lat:'Tyto alba',
-    photo:'img/photo_3.jpg', poster:'img/poster_3.jpg', movie:'movie/倉鴞.mp4', model:'倉鴞.glb', fallbackModel:'glb/倉鴞.glb',
+    photo:'img/photo_3.jpg', poster:'img/poster_3.jpg', movie:cdnAsset('movie/倉鴞.mp4'), model:cdnAsset('倉鴞.glb'), fallbackModel:'倉鴞.glb',
     colors:{ body:0xcaa562, bodyDark:0x8a6a3c, belly:0xf3ead0, face:0xf1e6c8, eyes:0x1a1310, beak:0x352818, perch:0x5b4530 },
     hasEarTufts:false,
     call:'screech',
@@ -73,7 +77,7 @@ const OWLS = {
   shorteared: {
     id:'shorteared', order:4,
     zh:'短耳鴞', en:'Short-eared Owl', lat:'Asio flammeus',
-    photo:'img/photo_4.jpg', poster:'img/poster_4.jpg', movie:'movie/短耳鴞.mp4', model:'短耳鴞.glb', fallbackModel:'glb/短耳鴞.glb',
+    photo:'img/photo_4.jpg', poster:'img/poster_4.jpg', movie:cdnAsset('movie/短耳鴞.mp4'), model:cdnAsset('短耳鴞.glb'), fallbackModel:'短耳鴞.glb',
     colors:{ body:0x8a6b3f, bodyDark:0x5c4527, belly:0xdcc79a, face:0xc7ac78, eyes:0xf0c23e, beak:0x2b2018, perch:0x5b4530 },
     hasEarTufts:false,
     call:'softhoot',
