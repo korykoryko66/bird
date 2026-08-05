@@ -6,9 +6,12 @@
    how this connects to the real camera-based MindAR implementation.
    ========================================================================= */
 
-const ASSET_CDN_VERSION = 'ea24bee7f6969593b5ef7340186f3108752a05f7';
+const ASSET_CDN_VERSION = 'ee96109b90a19363ab481f5740ec0dd7603337f6';
 const ASSET_CDN = `https://cdn.jsdelivr.net/gh/korykoryko66/bird@${ASSET_CDN_VERSION}`;
-const cdnAsset = path => `${ASSET_CDN}/${path.split('/').map(encodeURIComponent).join('/')}`;
+const IS_LOCAL_PREVIEW = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+const cdnAsset = path => IS_LOCAL_PREVIEW
+  ? path
+  : `${ASSET_CDN}/${path.split('/').map(encodeURIComponent).join('/')}`;
 
 const OWLS = {
   brown: {
