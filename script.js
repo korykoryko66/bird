@@ -96,6 +96,83 @@ const OWLS = {
     }
   }
 };
+
+const OWL_PROFILES = {
+  brown:{
+    overview:{
+      zh:'褐林鴞是鴟鴞科林鴞屬的中大型夜行性猛禽，分布於南亞至東亞，也見於臺灣，白天多藏身在茂密森林中。',
+      en:'The Brown Wood Owl is a medium-large, highly nocturnal owl of the family Strigidae. It ranges from South to East Asia, including Taiwan, and usually shelters in dense forest by day.'
+    },
+    facts:[
+      {labelZh:'中英文稱呼',labelEn:'Common names',zh:'褐林鴞',en:'Brown Wood Owl'},
+      {labelZh:'體型',labelEn:'Body size',zh:'全長約 45–57 公分',en:'Body length: about 45–57 cm'},
+      {labelZh:'體重',labelEn:'Weight',zh:'約 950–1,100 公克；不同亞種可能有差異',en:'About 950–1,100 g; weight can vary among subspecies'},
+      {labelZh:'居住地',labelEn:'Habitat & range',zh:'印度、孟加拉、斯里蘭卡、臺灣、印尼及中國南部的茂密森林、熱帶森林與山地林。',en:'Dense, tropical, and montane forests from India, Bangladesh, and Sri Lanka to Taiwan, Indonesia, and southern China.'},
+      {labelZh:'外觀型態',labelEn:'Appearance',zh:'上體深褐色，肩部有淡白斑；下體淡黃並帶褐色縱紋。褐紅色面盤有白邊，眼睛深褐，頸部有白色環帶。',en:'Uniformly dark-brown upperparts with faint white shoulder spots; buff underparts with brown streaks; a brown to rufous facial disc edged in white, dark-brown eyes, and a white neckband.'},
+      {labelZh:'食性',labelEn:'Diet',zh:'主要捕食小型哺乳類、鳥類與爬行類。',en:'Feeds mainly on small mammals, birds, and reptiles.'}
+    ],
+    sources:[
+      {label:'中文 Wikipedia',url:'https://zh.wikipedia.org/wiki/%E8%A4%90%E6%9E%97%E9%B4%9E'},
+      {label:'English Wikipedia',url:'https://en.wikipedia.org/wiki/Brown_wood_owl'},
+      {label:'體重資料 · Wikipedia IT',url:'https://it.wikipedia.org/wiki/Strix_leptogrammica'}
+    ]
+  },
+  collared:{
+    overview:{
+      zh:'領角鴞是角鴞屬的小型夜行性貓頭鷹，分布於南亞與東亞，也生活在臺灣；牠適應力強，森林、果園、公園與城市綠地都可能見到。',
+      en:'The Collared Scops Owl is a small nocturnal owl of South and East Asia, including Taiwan. It adapts well to forests, orchards, parks, and wooded urban areas.'
+    },
+    facts:[
+      {labelZh:'中英文稱呼',labelEn:'Common names',zh:'領角鴞',en:'Collared Scops Owl'},
+      {labelZh:'體型',labelEn:'Body size',zh:'全長約 23–25 公分',en:'Body length: about 23–25 cm'},
+      {labelZh:'體重',labelEn:'Weight',zh:'約 100–170 公克；雌鳥通常較大',en:'About 100–170 g; females are generally larger'},
+      {labelZh:'居住地',labelEn:'Habitat & range',zh:'喜馬拉雅山區至中國南部、臺灣及東南亞的森林、次生林、竹林，也會出現在聚落與城市綠地。',en:'Forests, secondary woodland, bamboo, settlements, and urban green spaces from the Himalayas to southern China, Taiwan, and Southeast Asia.'},
+      {labelZh:'外觀型態',labelEn:'Appearance',zh:'頭頂有短角羽；上體灰褐或紅褐並帶淡黃斑點，下體淡黃且有細深色縱紋。面盤白或淡黃，眼睛橙色至褐色，頸後有淡色環帶。',en:'Short ear tufts; grey-brown or rufous upperparts with buff spots; buff underparts with fine dark streaks; a whitish or buff facial disc, orange to brown eyes, and a pale collar.'},
+      {labelZh:'食性',labelEn:'Diet',zh:'以昆蟲為主，也吃蜥蜴、老鼠及小型鳥類。',en:'Feeds mainly on insects, with lizards, mice, and small birds also taken.'}
+    ],
+    sources:[
+      {label:'中文 Wikipedia',url:'https://zh.wikipedia.org/wiki/%E9%A0%98%E8%A7%92%E9%B4%9E'},
+      {label:'English Wikipedia',url:'https://en.wikipedia.org/wiki/Collared_scops_owl'},
+      {label:'體重資料 · Wikipedia DE',url:'https://de.wikipedia.org/wiki/Halsband-Zwergohreule'}
+    ]
+  },
+  barn:{
+    overview:{
+      zh:'倉鴞是草鴞科的中型貓頭鷹，以淺色羽毛、心形面盤和安靜飛行聞名，常在開闊農地與草地低空搜尋獵物。',
+      en:'The Barn Owl is a medium-sized owl of the family Tytonidae, known for its pale plumage, heart-shaped face, and silent flight over open farmland and grassland.'
+    },
+    facts:[
+      {labelZh:'中英文稱呼',labelEn:'Common names',zh:'倉鴞／西方倉鴞',en:'Barn Owl / Western Barn Owl'},
+      {labelZh:'體型',labelEn:'Body size',zh:'全長約 33–35 公分；翼展約 80–95 公分',en:'Body length: about 33–35 cm; wingspan: about 80–95 cm'},
+      {labelZh:'體重',labelEn:'Weight',zh:'約 240–480 公克；依亞種與性別而異',en:'About 240–480 g, varying by subspecies and sex'},
+      {labelZh:'居住地',labelEn:'Habitat & range',zh:'歐洲、西南亞與非洲的農地、草地等開闊環境，附近通常有林帶、樹洞、穀倉或廢棄建築可供棲息。',en:'Open farmland and grassland across Europe, southwestern Asia, and Africa, usually near woodland, tree hollows, barns, or unused buildings.'},
+      {labelZh:'外觀型態',labelEn:'Appearance',zh:'長翼、短方尾；頭背部呈灰褐或淡褐斑駁色，下體白至黃褐。心形淺色面盤與黑色眼睛是最明顯的特徵。',en:'Long wings and a short square tail; mottled grey-brown to buff upperparts, white to buff underparts, and a distinctive pale heart-shaped face with black eyes.'},
+      {labelZh:'食性',labelEn:'Diet',zh:'以田鼠、鼩鼱、老鼠等小型哺乳類為主，也會捕食鳥類、蝙蝠、蜥蜴、兩棲類及昆蟲。',en:'Feeds mainly on small mammals such as voles, shrews, mice, and rats, with birds, bats, lizards, amphibians, and insects also taken.'}
+    ],
+    sources:[
+      {label:'中文 Wikipedia',url:'https://zh.wikipedia.org/wiki/%E8%A5%BF%E4%BB%93%E9%B8%AE'},
+      {label:'English Wikipedia',url:'https://en.wikipedia.org/wiki/Western_barn_owl'}
+    ]
+  },
+  shorteared:{
+    overview:{
+      zh:'短耳鴞是分布廣泛的中型草原貓頭鷹，常在晨昏或白天貼近地面飛行獵食；牠具有遷徙性，在臺灣屬不普遍的冬候鳥。',
+      en:'The Short-eared Owl is a widespread, medium-sized grassland owl. It often hunts low over open ground by day or at dusk and is partly migratory.'
+    },
+    facts:[
+      {labelZh:'中英文稱呼',labelEn:'Common names',zh:'短耳鴞',en:'Short-eared Owl'},
+      {labelZh:'體型',labelEn:'Body size',zh:'全長約 34–43 公分；翼展約 85–110 公分',en:'Body length: about 34–43 cm; wingspan: about 85–110 cm'},
+      {labelZh:'體重',labelEn:'Weight',zh:'約 206–475 公克；雌鳥通常稍大',en:'About 206–475 g; females are usually slightly larger'},
+      {labelZh:'居住地',labelEn:'Habitat & range',zh:'除南極洲與澳洲外廣泛分布，偏好草地、農地、草原、凍原、稀樹草原與濕地周邊等開闊環境。',en:'Widely distributed on every continent except Antarctica and Australia, favouring open grassland, farmland, prairie, tundra, savanna, and wetland edges.'},
+      {labelZh:'外觀型態',labelEn:'Appearance',zh:'大頭、短頸、寬翼；羽色為斑駁黃褐至棕色，翅與尾有橫斑。黃橙色眼睛周圍有黑色眼圈，耳羽很短，平時不明顯。',en:'A large head, short neck, and broad wings; mottled tawny-brown plumage with barred wings and tail; yellow-orange eyes ringed in black, and very short ear tufts that are usually hidden.'},
+      {labelZh:'食性',labelEn:'Diet',zh:'主要吃鼠類，尤其偏好田鼠；也會捕食兔、鼩鼱、蝙蝠、小型鳥類與昆蟲。',en:'Feeds mainly on rodents, especially voles, and also takes rabbits, shrews, bats, small birds, and insects.'}
+    ],
+    sources:[
+      {label:'中文 Wikipedia',url:'https://zh.wikipedia.org/wiki/%E7%9F%AD%E8%80%B3%E9%B8%AE'},
+      {label:'English Wikipedia',url:'https://en.wikipedia.org/wiki/Short-eared_owl'}
+    ]
+  }
+};
 const OWL_ORDER = ['brown','collared','barn','shorteared'];
 
 /* ---------------------------------------------------------------------- */
@@ -193,6 +270,7 @@ function returnToStart(){
   clearTimeout(scanTimer);
   scanTimer=null;
   cancelPreview();
+  closeSpeciesProfile();
   stopIntroTimers();
   modelLoadId++;
   currentOwl=null;
@@ -418,8 +496,8 @@ function easeOutBack(t){const c1=1.7,c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Mat
 function easeInOutSine(t){return -(Math.cos(Math.PI*t)-1)/2;}
 function clamp01(t){return Math.max(0,Math.min(1,t));}
 
-/* ---- intro timeline (15s) ---- */
-const TIMELINE_MS=15000;
+/* ---- intro timeline (5s) ---- */
+const TIMELINE_MS=5000;
 let introStart=0, introRunning=false, interactive=false, rafId=null;
 let userRotY=0, userScale=1, blinkPhaseDone=[false,false];
 let introTimers=[];
@@ -466,11 +544,10 @@ async function enterStage(owl){
   showScreen('stage');
   document.getElementById('stageZh').textContent=owl.zh;
   document.getElementById('stageLat').textContent=owl.lat+' · '+owl.en;
-  buildHotspotChips(owl);
   userScale=1;
   updateZoomLabel();
   stopIntroTimers();
-  enableChips(false);
+  setProfileButtonEnabled(false);
   showModelLoading(null);
   resizeRenderer();
   const previewPromise=playPreview(owl);
@@ -488,8 +565,7 @@ function runIntro(owl){
   stopIntroTimers();
   clearCaption();
   document.getElementById('hintChip').classList.remove('show');
-  document.getElementById('infoSheet').classList.remove('open');
-  setActiveChip(null);
+  closeSpeciesProfile();
   userRotY=0; blinkPhaseDone=[false,false];
   introRunning=true; interactive=false;
   introStart=performance.now();
@@ -498,7 +574,7 @@ function runIntro(owl){
   const txt=document.getElementById('progressTxt');
 
   // caption schedule
-  [0,3600,7400,11200].forEach((delay,i)=>{
+  [0,1650,3300].forEach((delay,i)=>{
     introTimers.push(setTimeout(()=>setCaption(i,owl), delay));
   });
   introTimers.push(setTimeout(clearCaption, TIMELINE_MS-300));
@@ -507,7 +583,7 @@ function runIntro(owl){
   }, TIMELINE_MS-1600));
   introTimers.push(setTimeout(()=>{
     interactive=true;
-    enableChips(true);
+    setProfileButtonEnabled(true);
   }, TIMELINE_MS));
 
   function frame(now){
@@ -515,9 +591,9 @@ function runIntro(owl){
     animateOwl(t, owl);
     const pct=clamp01(t/TIMELINE_MS);
     el.style.width=(pct*100)+'%';
-    const sec=Math.min(15, (t/1000));
+    const sec=Math.min(5, (t/1000));
     txt.textContent = t<TIMELINE_MS
-      ? `導覽動畫播放中 0:${String(Math.floor(sec)).padStart(2,'0')} / 0:15`
+      ? `導覽動畫播放中 0:${String(Math.floor(sec)).padStart(2,'0')} / 0:05`
       : `導覽完成 · 可自由旋轉與探索 Ready to explore`;
     renderer.render(scene,camera);
     if(t<TIMELINE_MS || true){ rafId=requestAnimationFrame(frame); }
@@ -529,38 +605,38 @@ function animateOwl(t, owl){
   if(!owlObj) return;
   const {root, parts} = owlObj;
 
-  // phase A 0-900: scale + fly down
-  const aT=clamp01(t/900);
+  // phase A 0-350: scale + fly down
+  const aT=clamp01(t/350);
   const scale=easeOutBack(aT);
   root.scale.setScalar(Math.max(scale,0.001)*userScale);
-  const bT=clamp01(t/1100);
+  const bT=clamp01(t/475);
   root.position.y = MODEL_REST_Y + MODEL_DROP_HEIGHT - easeOutCubic(bT)*MODEL_DROP_HEIGHT;
 
-  // phase B 900-1600 wing flutter (landing)
-  flapWings(parts, t, 900, 1600, 1);
+  // phase B 350-675 wing flutter (landing)
+  flapWings(parts, t, 350, 675, 1);
 
-  // phase C 1600-6600: one full spin
-  if(t<6600){
-    const cT=clamp01((t-1600)/5000);
+  // phase C 650-2500: one full spin
+  if(t<2500){
+    const cT=clamp01((t-650)/1850);
     root.rotation.y = easeInOutSine(cT)*Math.PI*2;
   } else if (!interactive) {
     root.rotation.y = 0 + userRotY;
   }
 
-  // phase D 6600-9600: head turn + blinks
-  if(t>=6600 && t<9600){
-    const dT=(t-6600)/3000;
+  // phase D 2500-3700: head turn + blinks
+  if(t>=2500 && t<3700){
+    const dT=(t-2500)/1200;
     const turn=Math.sin(dT*Math.PI*1.5)*0.5;
     if(parts.head) parts.head.rotation.y=turn;
-  } else if(t>=9600){
+  } else if(t>=3700){
     if(parts.head) parts.head.rotation.y*=0.9;
   }
-  blink(parts, t, 7200, 0);
-  blink(parts, t, 8700, 1);
+  blink(parts, t, 2850, 0);
+  blink(parts, t, 3450, 1);
 
-  // phase E 9600-13600: two flaps
-  flapWings(parts, t, 10000, 10700, 1);
-  flapWings(parts, t, 12200, 12900, 1);
+  // phase E 3700-4700: two flaps
+  flapWings(parts, t, 3750, 4050, 1);
+  flapWings(parts, t, 4350, 4650, 1);
 
   // idle after intro
   if(t>=TIMELINE_MS){
@@ -692,64 +768,64 @@ document.getElementById('zoomOutBtn').onclick=()=>setModelScale(userScale/1.15);
 document.getElementById('zoomResetBtn').onclick=()=>setModelScale(1);
 
 function handleTap(e){
-  if(!owlObj) return;
-  const rect=canvas.getBoundingClientRect();
-  const ndc=new THREE.Vector2(
-    ((e.clientX-rect.left)/rect.width)*2-1,
-    -((e.clientY-rect.top)/rect.height)*2+1
-  );
-  const ray=new THREE.Raycaster();
-  ray.setFromCamera(ndc,camera);
-  const hits=ray.intersectObjects(owlObj.root.children, true);
-  for(const h of hits){
-    let o=h.object;
-    while(o && !o.userData.hotspot){ o=o.parent; }
-    if(o && o.userData.hotspot){
-      openHotspot(o.userData.hotspot);
-      return;
-    }
-  }
+  if(!owlObj || !interactive) return;
+  openSpeciesProfile();
 }
 
-/* ---- hotspot chips + info sheet ---- */
-const HOTSPOT_KEYS=['face','eyes','wings','feet'];
-function buildHotspotChips(owl){
-  const row=document.getElementById('hotspotRow');
-  row.innerHTML='';
-  HOTSPOT_KEYS.forEach(k=>{
-    const h=owl.hotspots[k];
-    const chip=document.createElement('button');
-    chip.className='chip';
-    chip.dataset.key=k;
-    chip.innerHTML=`<span class="dot"></span>${h.zh}`;
-    chip.onclick=()=>{ if(interactive) openHotspot(k); };
-    row.appendChild(chip);
-  });
-  enableChips(false);
+/* ---- bilingual species profile ---- */
+const profileBtn=document.getElementById('profileBtn');
+const infoSheet=document.getElementById('infoSheet');
+
+function setProfileButtonEnabled(on){
+  profileBtn.disabled=!on;
 }
-function enableChips(on){
-  document.querySelectorAll('#hotspotRow .chip').forEach(c=>c.classList.toggle('enabled',on));
-}
-function setActiveChip(key){
-  document.querySelectorAll('#hotspotRow .chip').forEach(c=>{
-    c.classList.toggle('active', c.dataset.key===key);
-  });
-}
-function openHotspot(key){
-  if(!currentOwl) return;
-  const h=currentOwl.hotspots[key];
-  document.getElementById('infoTitleZh').textContent=h.zh;
-  document.getElementById('infoTitleEn').textContent=h.en;
-  document.getElementById('infoTextZh').textContent=h.tzh;
-  document.getElementById('infoTextEn').textContent=h.ten;
-  document.getElementById('infoSheet').classList.add('open');
-  setActiveChip(key);
+
+function openSpeciesProfile(){
+  if(!currentOwl || !interactive) return;
+  const profile=OWL_PROFILES[currentOwl.id];
+  if(!profile) return;
+
+  document.getElementById('profileTitleZh').textContent=currentOwl.zh;
+  document.getElementById('profileTitleEn').textContent=currentOwl.en;
+  document.getElementById('profileLatin').textContent=currentOwl.lat;
+  document.getElementById('profileContent').innerHTML=`
+    <section class="profile-overview">
+      <div class="profile-label"><b>基本介紹</b><small>Overview</small></div>
+      <p class="zh-value">${profile.overview.zh}</p>
+      <p class="en-value" lang="en">${profile.overview.en}</p>
+    </section>
+    <div class="profile-facts">
+      ${profile.facts.map(fact=>`
+        <section class="profile-fact">
+          <div class="profile-label"><b>${fact.labelZh}</b><small>${fact.labelEn}</small></div>
+          <p class="zh-value">${fact.zh}</p>
+          <p class="en-value" lang="en">${fact.en}</p>
+        </section>
+      `).join('')}
+    </div>`;
+  document.getElementById('profileSources').innerHTML=`
+    <span>資料來源 Sources:</span>
+    ${profile.sources.map(source=>`<a href="${source.url}" target="_blank" rel="noopener noreferrer">${source.label}</a>`).join('')}`;
+
+  infoSheet.classList.add('open');
+  infoSheet.setAttribute('aria-hidden','false');
+  profileBtn.setAttribute('aria-expanded','true');
   document.getElementById('hintChip').classList.remove('show');
 }
-document.getElementById('infoClose').onclick=()=>{
-  document.getElementById('infoSheet').classList.remove('open');
-  setActiveChip(null);
-};
+
+function closeSpeciesProfile(){
+  infoSheet.classList.remove('open');
+  infoSheet.setAttribute('aria-hidden','true');
+  profileBtn.setAttribute('aria-expanded','false');
+}
+
+profileBtn.setAttribute('aria-controls','infoSheet');
+profileBtn.setAttribute('aria-expanded','false');
+profileBtn.onclick=openSpeciesProfile;
+document.getElementById('infoClose').onclick=closeSpeciesProfile;
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape' && infoSheet.classList.contains('open')) closeSpeciesProfile();
+});
 
 /* ---------------------------------------------------------------------- */
 /* Synthesized call audio (placeholder — see chat notes)                  */

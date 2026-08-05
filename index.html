@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>AR 貓頭鷹導覽 · 鳳凰谷鳥園生態園區</title>
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=profile-preview-1">
 </head>
 <body>
 <div id="app">
@@ -21,9 +21,9 @@
     <div class="hello-bar">Hello, my name is</div>
     <h1 class="title-zh">AR 貓頭鷹導覽</h1>
     <div class="title-en">Interactive AR Owl Guide</div>
-    <p class="intro-copy">輕觸下方任一張解說牌照片，模擬「掃描解說牌」的過程 —— 貓頭鷹將以 3D 動畫現身，播放 15 秒自我介紹，接著你可以旋轉觀看、點擊身體部位認識構造，並播放牠的叫聲。</p>
+    <p class="intro-copy">輕觸下方任一張解說牌照片，貓頭鷹將以 3D 動畫現身，播放 5 秒精華介紹；接著你可以自由旋轉、縮放模型，開啟中英雙語物種資料卡，並播放牠的叫聲。</p>
     <div class="grid" id="ownGrid"></div>
-    <p class="footnote"><b>這是什麼：</b>這個畫面示範的是「掃描之後會發生什麼」—— 也就是 AR 內容本身：3D 貓頭鷹、自動導覽動畫、可旋轉模型、部位解說、叫聲播放，完全不需要相機權限，方便你現在就在對話裡直接體驗。真正「用手機相機對準解說牌」的掃描辨識功能，在下方我準備的可部署版本中，使用 MindAR 影像辨識技術實作，需要架設到有 HTTPS 的網站才能在手機瀏覽器上運作。</p>
+    <p class="footnote"><b>這是什麼：</b>這個畫面示範掃描後出現的 AR 內容：3D 貓頭鷹、5 秒自動導覽、可旋轉縮放模型、中英雙語物種資料卡與叫聲播放。此預覽不需要相機權限，方便直接體驗。</p>
   </section>
 
   <!-- ===================== SCANNING ===================== -->
@@ -46,7 +46,7 @@
     </div>
     <div class="progress-wrap">
       <div class="progress-bar"><i id="progressFill"></i></div>
-      <div class="progress-txt" id="progressTxt">導覽動畫播放中 0:00 / 0:15</div>
+      <div class="progress-txt" id="progressTxt">導覽動畫播放中 0:00 / 0:05</div>
     </div>
     <div id="canvas-wrap">
       <canvas id="owlCanvas"></canvas>
@@ -60,7 +60,7 @@
         <button class="preview-skip" id="previewSkip" type="button">略過影片 Skip</button>
       </div>
       <div class="caption-chip" id="captionChip"></div>
-      <div class="hint-chip" id="hintChip">拖曳可旋轉 · 雙指縮放模型</div>
+      <div class="hint-chip" id="hintChip">拖曳旋轉 · 雙指縮放 · 點開物種資料卡</div>
       <div class="zoom-controls" aria-label="模型縮放控制">
         <button id="zoomInBtn" aria-label="放大模型" disabled>＋</button>
         <button id="zoomResetBtn" aria-label="重設模型大小" disabled>100%</button>
@@ -68,20 +68,29 @@
       </div>
     </div>
 
-    <div id="infoSheet">
-      <div class="row">
+    <div id="infoSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitleZh" aria-hidden="true">
+      <div class="profile-handle" aria-hidden="true"></div>
+      <div class="row profile-head">
         <div>
-          <h3 id="infoTitleZh"></h3>
-          <div class="en" id="infoTitleEn"></div>
+          <span class="profile-kicker">OWL SPECIES PROFILE</span>
+          <h3 id="profileTitleZh"></h3>
+          <div class="en" id="profileTitleEn"></div>
+          <div class="profile-latin" id="profileLatin"></div>
         </div>
-        <button class="closeX" id="infoClose">✕</button>
+        <button class="closeX" id="infoClose" aria-label="關閉物種資料卡">✕</button>
       </div>
-      <p id="infoTextZh"></p>
-      <p class="en-text" id="infoTextEn"></p>
+      <div class="profile-content" id="profileContent"></div>
+      <div class="profile-sources" id="profileSources"></div>
     </div>
 
     <div class="controls">
-      <div class="hotspot-row" id="hotspotRow"></div>
+      <div class="hotspot-row" id="hotspotRow">
+        <button class="profile-btn" id="profileBtn" type="button" disabled>
+          <span class="profile-btn-icon">🦉</span>
+          <span><b>物種資料卡</b><small>Species Profile</small></span>
+          <span class="profile-btn-arrow">↑</span>
+        </button>
+      </div>
       <div class="action-row">
         <button class="btn btn-ghost" id="replayBtn">↻ 重播導覽</button>
         <button class="btn btn-primary" id="callBtn">🔊 播放叫聲</button>
@@ -94,6 +103,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="vendor/GLTFLoader.js"></script>
-<script src="script.js?v=cdn-bird-2"></script>
+<script src="script.js?v=profile-preview-2"></script>
 </body>
 </html>
